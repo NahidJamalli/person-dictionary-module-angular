@@ -1,0 +1,162 @@
+<div>
+    <app-alert [message]="uiMessage" [showCondition]="uiMessage !== ''" [type]="uiMessageType"></app-alert>
+    <form (ngSubmit)="onSubmitClick()">
+        <div class="row">
+            <div class="col-lg-6 col-sm-12">
+                <div class="row">
+                    <div class="col-6">
+                        <div class="mb-3">
+                            <label for="InputFirst" class="form-label">First Name</label>
+                            <input type="text" class="form-control " id="InputFirst" name="first-name"
+                                [(ngModel)]="personDetail.firstName">
+                        </div>
+                    </div>
+                    <div class="col-6">
+
+                        <div class="mb-3">
+                            <label for="InputLast" class="form-label">Last Name</label>
+                            <input type="text" class="form-control" id="InputLast" name="last-name"
+                                [(ngModel)]="personDetail.lastName">
+                        </div>
+                    </div>
+                </div>
+                <div class="mb-3">
+                    <label for="PersNum" class="form-label">Personal Number</label>
+                    <input type="text" class="form-control" id="PersNum" name="personal-number"
+                        [(ngModel)]="personDetail.personalNumber">
+                </div>
+                <div class="row">
+                    <div class="col-6">
+                        <div class="mb-3">
+                            <label for="genderselect" class="form-label">Gender</label>
+                            <select name="genderselect" id="genderselect" class="form-select"
+                                [value]="personDetail.gender" [(ngModel)]="personDetail.gender">
+                                <option value="0">Male</option>
+                                <option value="1">Female</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="col-6">
+                        <div class="mb-3">
+                            <label for="BirthDay" class="form-label">BirthDate</label>
+                            <input type="date" class="form-control" id="BirthDay" name="birthday"
+                                [ngModel]="personDetail.birthDate | date: 'yyyy-MM-dd'"
+                                (ngModelChange)="personDetail.birthDate = $event">
+                        </div>
+                    </div>
+                </div>
+                <div class="mb-3">
+                    <label for="cityselect" class="form-label">City</label>
+                    <select name="cityselect" id="cityselect" class="form-select" name="cityid"
+                        [(ngModel)]="personDetail.city.id">
+                        <option *ngFor="let city of cityList" [value]="city.id"
+                            selected="{{ personDetail.city.id === city.id }}">
+                            {{ city.name }}
+                        </option>
+                    </select>
+                </div>
+                <div class="mb-3">
+                    <label for="photocontrol" class="form-label">Photo
+                        <a href="{{ personDetail.targetUrl }}" target="_blank" *ngIf="personDetail.targetUrl">
+                            See current photo
+                        </a>
+                    </label>
+                    <input type="file" id="photocontrol" class="form-control" aria-label="photo upload"
+                        accept="image/x-png" (change)="onFileSelected($event)">
+                </div>
+            </div>
+            <div class="col-lg-6 col-sm-12">
+                <div class="mb-3">
+                    <div class="row">
+                        <div class="col-3">
+                            <label for="typeselect" class="form-label">Number Type</label>
+                            <select id="typeselect" class="form-select" name="phonetype" [(ngModel)]="tempType">
+                                <option *ngFor="let pnt of phoneNumberTypes; let indexOfelement=index;"
+                                    value={{indexOfelement}}>{{ pnt }}</option>
+                            </select>
+                        </div>
+                        <div class="col-7">
+                            <label for="phone-add" class="form-label">Phone Numbers</label>
+                            <input required type="text" name="phone-add" [(ngModel)]="tempNumber" class="form-control">
+                        </div>
+                        <div class="col-2">
+                            <button type="button" class="btn btn-secondary" (click)="onAddNumber()">+ Add</button>
+                        </div>
+                    </div>
+                </div>
+                <div class="mb-3">
+                    <label class="form-label">Phone Numbers</label>
+                    <table class="table table-stripped">
+                        <thead>
+                            <tr>
+                                <th>Type</th>
+                                <th>Number</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr *ngFor="let phone of personDetail.phoneNumbers">
+                                <td>{{ phoneNumberTypes[phone.type] }}</td>
+                                <td>{{ phone.number }}</td>
+                                <td>
+                                    <button class="btn btn-danger" type="button"
+                                        (click)="removePhone(phone.id)">Remove</button>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+                <div class="mt-5 mb-3">
+                    <label class="form-label">Relatives</label>
+                    <div class="mb-3">
+                        <div class="row">
+                            <div class="col-3">
+                                <label for="typeselect" class="form-label">Relative Type</label>
+                                <select id="typeselect" class="form-select" name="relativetype"
+                                    [(ngModel)]="tempRelativeType">
+                                    <option *ngFor="let rpt of relatedPersonTypes; let indexOfelement=index;"
+                                        value={{indexOfelement}} value>{{ rpt }}</option>
+                                </select>
+                            </div>
+                            <div class="col-7">
+                                <label for="phone-add" class="form-label">Name</label>
+                                <select id="typeselect" class="form-select" name="relativetype"
+                                    [(ngModel)]="tempRelativeId">
+                                    <option *ngFor="let p of people.peopleData" [value]=p.id>
+                                        {{ p.firstName }} {{ p.lastName }}
+                                    </option>
+                                </select>
+                            </div>
+                            <div class="col-2">
+                                <button type="button" class="btn btn-secondary" (click)="onAddRelative()">+ Add</button>
+                            </div>
+                        </div>
+                    </div>
+                    <table class="table table-stripped">
+                        <thead>
+                            <tr>
+                                <th>Type</th>
+                                <th>Name</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr *ngFor="let relative of personDetail.relatedPeople">
+                                <td>{{ relatedPersonTypes[relative.relativeType] }}</td>
+                                <td>{{ relative.firstName }} {{ relative.lastName }}</td>
+                                <td>
+                                    <a class="btn btn-secondary" [routerLink]="['/persons', relative.id]">Details</a>
+                                    <button class="btn btn-danger ml-1" type="button"
+                                        (click)="removeRelative(relative.id)">Remove</button>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+
+        <button type="submit" class="btn btn-primary">Submit</button>
+    </form>
+</div>
